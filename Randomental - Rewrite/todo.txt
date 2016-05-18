@@ -1,0 +1,20 @@
+/*
+TODO:
+
+Content:
+Add content.
+Add the base-12 option.
+Soundboard
+etc.
+
+Functionality:
+SAVING
+Dim the lights as we pick hooks.
+Notifications
+Tooltips
+etc.
+
+Bugs:
+?
+
+*/

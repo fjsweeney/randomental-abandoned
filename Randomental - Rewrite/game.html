@@ -1,0 +1,40 @@
+<!doctype html>
+<html>
+<head lang="en">
+    <meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+		<!-- Latest compiled and minified CSS -->
+		<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+
+		<!-- jQuery library -->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+
+		<!-- Latest compiled JavaScript -->
+		<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+	
+    <title>Randomental</title>
+		<style>
+			* { margin: 0; padding: 0; }
+			theDisplay { width: 99%; height:99%;}
+		</style>
+</head>
+<body>
+	<script src="scripts/zgfx.js"></script>  <!-- So we can see sturf -->
+	<script src="scripts/randomental_base.js"></script> <!-- load first -->
+	<script src="scripts/randomental_constructors.js"></script> <!-- load also first -->
+	<script src="scripts/randomental_data.js"></script>  
+	<script src="scripts/randomental_points.js"></script> 
+    <script src="scripts/randomental_achievos.js"></script> 
+	<script src="scripts/randomental_actions.js"></script>  
+	<script src="scripts/randomental_era_one.js"></script>  
+	<script src="scripts/randomental_saveload.js"></script><!-- load last -->
+	<div class="container-fluid">
+		<div id="canvasContainer" class="container-fluid">
+			<canvas id="theDisplay">
+				Your browser doesn't support canvas. Consider upgrading to <a href="www.maxthon.com/">Maxthon Web Browser</a>.
+			</canvas>
+		</div>
+	</div>
+</body>
+</html>
