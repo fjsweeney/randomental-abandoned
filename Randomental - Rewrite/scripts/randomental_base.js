@@ -82,7 +82,6 @@ Game.log.write = function(words){
 Game.anytime = []; //This game is kinda slow, so some things can be done 'anytime'.
 Game.loop = function(){
 	if(Game.pause.level <= 0){Game.timer.tick();};
-	if(!Game.blurry){gfxEngine.gfxGo();};
 	if((Game.pause.value || Game.blurry) && (Game.anytime.length > 0)){(Game.anytime.shift())();};//Oh this is mean. Muahaha. Although not too mean.
 	var loop = setTimeout(Game.loop,12); //This is the func that never ends
 	return;

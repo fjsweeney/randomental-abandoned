@@ -259,47 +259,45 @@ gfxEngine.notification = function(words){
 	//This brings up some sort of _non-invasive_ pop up, or goes in a notification log or something.
 };
 /*********************************************************/
-gfxEngine.setFill = function(c){gfxEngine.Canvas.Context.fillStyle = c;}; //shortcuts.
-gfxEngine.setStroke = function(c){gfxEngine.Canvas.Context.strokeStyle = c;};
+gfxEngine.setFill = function(c){gfxEngine.Buffer.Context.fillStyle = c;}; //shortcuts.
+gfxEngine.setStroke = function(c){gfxEngine.Buffer.Context.strokeStyle = c;};
 
 gfxEngine.ColoredText = function(text,x,y,font,size,c){ //adapted gfxEngine.Text to accept a list of colors
 	var dx = 0;
 	for(var i = 0; i < text.length; i++){
-		gfxEngine.Text(text[i],x+dx,y,font,size,c[Math.round(Math.random()*c.length)]);
+		gfxEngine.Text(text[i],x+dx,y,font,size,c[Math.round(i*c.length/text.length)]);
 		dx = dx + size/2;
 	}
 }
 //All of the following was taken (and modified) from a js tutorial by /u/neurofluxation
 gfxEngine.Rect = function(x,y,w,h,c) {
 	gfxEngine.setFill(c);
-	gfxEngine.Canvas.Context.fillRect(x,y,w,h);
+	gfxEngine.Buffer.Context.fillRect(x,y,w,h);
 };
 gfxEngine.Text = function(text,x,y,font,size,c){ //This shortcut is more reasonable
 	gfxEngine.setFill(c);
-	gfxEngine.Canvas.Context.font = size + "px " + font;
-	gfxEngine.Canvas.Context.fillText(text,x,y);
+	gfxEngine.Buffer.Context.font = size + "px " + font;
+	gfxEngine.Buffer.Context.fillText(text,x,y);
 }
-gfxEngine.Canvas = {
-	Element:null,
-	Context:null
-};
 gfxEngine.Draw = function(){
-	gfxEngine.Canvas.Context.clearRect(0,0,gfxEngine.Canvas.width,gfxEngine.Canvas.height); //clear the frame
-	gfxEngine.setFill("#DCDCDC");
-	gfxEngine.Rect(0,0,gfxEngine.Canvas.width,gfxEngine.Canvas.height);
-	gfxEngine.gui.locations.display();
-	//gfxEngine.gfxLoop(); //Controlled by the gameloop to reduce resource use.
-};
-gfxEngine.gfxGo = function(){
+	if(!Game.blurry){
+		gfxEngine.Canvas.Context.drawImage(gfxEngine.Buffer,0,0);
+		gfxEngine.Buffer.Context.clearRect(0,0,gfxEngine.Canvas.width,gfxEngine.Canvas.height); //clear the frame
+		gfxEngine.setFill("#DCDCDC");
+		gfxEngine.Rect(0,0,gfxEngine.Buffer.width,gfxEngine.Buffer.height);
+		gfxEngine.gui.locations.display();
+		
+	}
+	clearTimeout(gfxEngine.running);
 	gfxEngine.running = setTimeout(function(){
-		requestAnimFrame(gfxEngine.Draw,gfxEngine.Canvas)
-	}, 12); //I like 12.
+			requestAnimFrame(gfxEngine.Draw,gfxEngine.Canvas)
+	}, 1000/30);
 };
 gfxEngine.init = function(){
 
 	gfxEngine.Canvas = $('#theDisplay')[0];
-	var w = $(window).width();
-    var h = $(window).height();
+	var w = $(window).width()*.99;
+    var h = $(window).height()*.99;
 
     $("#theDisplay").css("width", w + "px");
     $("#theDisplay").css("height", h + "px");
@@ -308,29 +306,33 @@ gfxEngine.init = function(){
 	
 	gfxEngine.Canvas.Context = gfxEngine.Canvas.getContext('2d');
 	
+	gfxEngine.Buffer = document.createElement('canvas');
+	gfxEngine.Buffer.Context = gfxEngine.Buffer.getContext('2d');
+	gfxEngine.Buffer.width = w;
+	gfxEngine.Buffer.height = h;
+	
 	gfxEngine.resize();
-	console.log("initialized!")
+	gfxEngine.Draw();
+	console.log("initialized!");
 };
 gfxEngine.resize = function(w,h){
-	gfxEngine.Canvas.Context.textAlign = "center";
+	gfxEngine.Buffer.Context.textAlign = "center";
 	gfxEngine.gui.locations.recalculate();
 }
 
-/** This is a request animation frame function that gets the best possible animation process for your browser, I won't go into specifics; just know it's worth using ;) **/
-window.requestAnimFrame = (function(){ //Looked it up, this is a polyfill function to work on multiple browsers.
+window.requestAnimFrame = (function(){ //This is a function to enable accessibility (work on multiple browsers).
 	return window.requestAnimationFrame || 
 		window.webkitRequestAnimationFrame || 
 		window.mozRequestAnimationFrame || 
 		window.oRequestAnimationFrame || 
 		window.msRequestAnimationFrame || 
-	function (callback, element){ //Why is the element passed to this??? Support for other browser's requestAnimFrame prolly.. not digging into it.
-		fpsLoop = window.setTimeout(callback, 1000 / 60);
+	function (callback, element){ //element is passed so that the function signatures match.
+		fpsLoop = window.setTimeout(callback, 1000 / 30);
 	};
 }());
 $(window).bind("resize", function(){
-    var w = $(window).width();
-    var h = $(window).height();
-
+    var w = $(window).width() *.99;
+    var h = $(window).height() *.99;
     $("#theDisplay").css("width", w + "px");
     $("#theDisplay").css("height", h + "px");
 	gfxEngine.Canvas.width = w;
