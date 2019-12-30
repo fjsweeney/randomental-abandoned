@@ -60,7 +60,7 @@ var loadPoints = function(){
 	Game.pointsByName["Hook"].updateName = function(){ return (this.dispValue() + " Hook" + ((this.value == 1) ? "" : "s"));};
 
 	//More points
-	Game.pointsByName["Gold"].updateName = function(){return (this.value + " Gold Bar" + ((this.value == 1) ? "" : "s"));};
+	Game.pointsByName["Gold"].updateName = function(){return (this.dispValue() + " Gold Bar" + ((this.value == 1) ? "" : "s"));};
 	Game.pointsByName["Gold"].colorlist = ["#FFFF00"];
 
 	Game.pointsByName["Fire"].firecolors = ["#FF0000", "#FF1500", "#FF2A00","#FF4000","#FF5500","#FF6A00","#FF8000","#FF9500","#FFAA00","#FFBF00","#FFD500","#FFEA00","#FFFF00"];
