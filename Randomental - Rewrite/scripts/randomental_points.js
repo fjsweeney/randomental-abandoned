@@ -1,4 +1,4 @@
-//points.js
+//randomental_points.js
 
 Game.points = []; //contains the kinds of points you can get
 Game.pointsByName = [];
@@ -34,7 +34,6 @@ Game.points.spend = function(name, num){
 	};
 };
 
-
 var loadPoints = function(){
 	//A closure, to keep temp functions out of namespace.
 	var newPoint = function(name){
@@ -58,7 +57,7 @@ var loadPoints = function(){
 		};
 		Game.points["Total"].value = total;
 	};
-	Game.pointsByName["Hook"].updateName = function(){ return (this.value + " Hook" + ((this.value == 1) ? "" : "s"));};
+	Game.pointsByName["Hook"].updateName = function(){ return (this.dispValue() + " Hook" + ((this.value == 1) ? "" : "s"));};
 
 	//More points
 	Game.pointsByName["Gold"].updateName = function(){return (this.value + " Gold Bar" + ((this.value == 1) ? "" : "s"));};

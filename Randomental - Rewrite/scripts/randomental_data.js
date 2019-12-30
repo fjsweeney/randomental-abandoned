@@ -1,4 +1,4 @@
-//data.js
+//randomental_data.js
 //Miscellaneous data, some of which is important.
 
 gfxEngine.gui.mainTab = gfxEngine.gui.locations.mainBar.newTab();
@@ -11,7 +11,7 @@ gfxEngine.gui.mainTab.desc = "Main";
 gfxEngine.gui.options.desc = "Options";
 gfxEngine.gui.achievos.desc = "Achievos";
 gfxEngine.gui.log.desc = "Log";
-gfxEngine.gui.pause.desc = "Pause";
+gfxEngine.gui.pause.desc = "Time";
 
 gfxEngine.gui.locations["resources"].display = function (){
 	this.displayBackground();
@@ -37,8 +37,11 @@ gfxEngine.gui.locations["timer"].display = function(){
 Game.pause = {}; //empty definition to define object properties.
 Game.pause.level = 0;
 Game.pause.words = ["STOP!","No seriously, stop pressing that.","Is this game frozen?","The game is paused. Just letting you know."]; //use these in the notification instead.
-Game.pause.f = function(){
-	if(Game.points.getPoint("Time").value < Game.points.getPoint("Time").maximum){
+
+Game.pause.pause = new Button();
+Game.pause.pause.desc = "Pause";
+Game.pause.pause.action = function(){
+	if(Game.points.find("Time").value < Game.points.find("Time").maximum){
 		Game.pause.level++;
 		Game.points.earn("Time",1);
 		if(Game.pause.level <= 4){
@@ -47,17 +50,21 @@ Game.pause.f = function(){
 		else{gfxEngine.notification(Game.pause.words[Math.round(Math.random()*Game.pause.words.length)]) } //needs work
 	} else {Game.failure("pausing");};
 };
-Game.pause.un = function(){
-	if(Game.points.getPoint("Time").value > Game.points.getPoint("Time").minimum){
+Game.pause.unpause = new Button();
+Game.pause.unpause.desc = "Unpause";
+Game.pause.unpause.action = function(){
+	if(Game.points.find("Time").value > Game.points.find("Time").minimum){
 		Game.pause.level--;
 		Game.points.earn("Time",-1);
-		if(Game.points.getPoint("Time").value == 0)
+		if(Game.points.find("Time").value == 0)
 			{gfxEngine.notification("HAMMERTIME!");
 			Game.points.earn("Hammer",1);}
 		else{gfxEngine.notification("Hammer...");}
 	} else {Game.failure("unpausing");};
 };
 
+gfxEngine.gui.pause.data.push(Game.pause.pause);
+gfxEngine.gui.pause.data.push(Game.pause.unpause);
 var sfxEngine = {};
 
 Game.failure = function(words){

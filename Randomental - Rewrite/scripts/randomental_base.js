@@ -39,13 +39,11 @@ Game.stack.run = function(){
 	console.log("Tick");
 	if(Game.stack.length > 0){(Game.stack.pop())();}
 };
-/*
-//This is theoretically checking for a certain event.
+
 Game.stack.contains = function(a){
 	for(var i = 0; i < Game.stack.length; i++){if(Game.stack[i] == a){return true;}};
 	return false;
 };
-*/
 Game.stack.maxLength = 12; //The stack will need a scrollbar.
 
 Game.timer = {
@@ -64,12 +62,10 @@ Game.timer = {
 		gfxEngine.Rect()
 	},
 	color:"#FFFFFF"
-}; // dates... BAH
+};
 
-// Needs mouse/keyboard listeners to add click/keyboard points
-
-Game.log = ["Log Created!"]; //Test if the log exists first.
-Game.log.maxLength = 12; //Arbitraryyyyyy
+Game.log = ["Log Created!"];
+Game.log.maxLength = 12;
 Game.log.write = function(words){
 	Game.log.push(words);
 	if(Game.log.length >= Game.log.maxlength){
@@ -81,8 +77,10 @@ Game.log.write = function(words){
 
 Game.anytime = []; //This game is kinda slow, so some things can be done 'anytime'.
 Game.loop = function(){
+	// Note: The timer will still go down, but the stack reduction function will not happen.
 	if(Game.pause.level <= 0){Game.timer.tick();};
-	if((Game.pause.value || Game.blurry) && (Game.anytime.length > 0)){(Game.anytime.shift())();};//Oh this is mean. Muahaha. Although not too mean.
+	//Anytime functions happen when the game is paused or out of focus.
+	if((Game.pause.value || Game.blurry) && (Game.anytime.length > 0)){(Game.anytime.shift())();};
 	var loop = setTimeout(Game.loop,12); //This is the func that never ends
 	return;
 };
@@ -100,6 +98,11 @@ Game.handleClick = function(m){
 	//check which boxes it falls in, either the main/sub Bars or main/subArea.
 	gfxEngine.handleClick(m); //Because they aren't html elements, we have to capture the mouse into the right area. The gfx will handle that.
 }
+Game.handleHover = function(m){
+	Game.points.earn("Wave",1);
+	//check which boxes it falls in, either the main/sub Bars or main/subArea.
+	gfxEngine.handleHover(m); //Because they aren't html elements, we have to capture the mouse into the right area. The gfx will handle that.
+}
 testClick = function(m){
 	var x = m.pageX;
 	var y = m.pageY;
@@ -107,3 +110,4 @@ testClick = function(m){
 }
 //jQuery interaction
 $("body").on('click',Game.handleClick);
+$("body").on('mousemove',Game.handleHover);

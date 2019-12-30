@@ -9,18 +9,28 @@
 var Button = function(){
 	this.pos = [0,0,0,0]; //bounding box, x,y,width,height, not initially set because gui handles it
 	this.action = function(){}; //what to do when clicked
-	this.desc = "A button?";
-	this.tooltip = "???";
-	this.foreground = "#000000"; // what color...
+	this.desc = "A button?"; //printed name
+	this.tooltip = "???"; //showed when hovered
+	this.foreground = "#000000";
 	this.background = "#FFFFFF";
 	this.hoverBackground = "#DCDCDC";
-	this.handleClick = function(m){this.action();}
+	this.hovered = false;
+	this.handleClick = function(m){
+		console.log(this.desc);
+		this.action();
+		}
+	this.handleHover = function(m){
+		this.hovered=true;
+		}
+	this.handleNotHovered = function(m){
+		this.hovered=false;
+	}
 	this.textSize = 12;
 	this.display = function(){
-		gfxEngine.Rect(this.pos[0],this.pos[1],this.pos[2],this.pos[3],this.background); //should check if I'm hovered...
+		gfxEngine.Rect(this.pos[0],this.pos[1],this.pos[2],this.pos[3],this.hovered? this.hoverBackground : this.background); //should check if I'm hovered...
 		gfxEngine.Text(this.desc, this.pos[0]+ this.pos[2]/2,this.pos[1]+this.textSize,"Arial",this.textSize,this.foreground);
 	};
-	this.data = []; //used for tabs and subtabs, as the array of buttons.
+	this.data = []; //used for tabs and subtabs.
 };
 var SubTab = function(){
 	Button.apply(this,arguments);
@@ -63,6 +73,16 @@ var GuiLocation = function(p,r,xs,ys,n,d){
 				if(m.pageY >=this.buttons[i].pos[1] && m.pageY <=(this.buttons[i].pos[3]+this.buttons[i].pos[1])){
 					this.buttons[i].handleClick(m);
 				};
+			};
+		};
+	};
+	this.handleHover=function(m){ //if they overlap, hover both
+		for(var i = 0; i <this.buttons.length;i++){
+			if(m.pageX >=this.buttons[i].pos[0] && m.pageX <=(this.buttons[i].pos[2]+this.buttons[i].pos[0]) &&
+			   m.pageY >=this.buttons[i].pos[1] && m.pageY <=(this.buttons[i].pos[3]+this.buttons[i].pos[1])){
+					this.buttons[i].handleHover(m);
+			} else {
+					this.buttons[i].handleNotHovered(m);
 			};
 		};
 	};
@@ -125,21 +145,24 @@ gfxEngine.gui.locations.addLoc = function(item){
 	gfxEngine.gui.locations.push(gfxEngine.gui.locations[item.name]);
 };
 
-gfxEngine.gui.locations.build = function(a, name){
+// this gets the order of building for recalculating the layout.
+gfxEngine.gui.locations.buildOrder = function(a, name){
 	var loc = gfxEngine.gui.locations;
-	a.push(loc[name]); //loc is sent by reference. Which is good!
+	a.push(loc[name]);
 	for(var i = 0; i < loc[name].next.length; i++){
-		gfxEngine.gui.locations.build(a, loc[name].next[i]);
+		gfxEngine.gui.locations.buildOrder(a, loc[name].next[i]);
 	};
 	return a;
 };
+
+//This makes the layout neater and tidier, autoadjusting and all that.
 gfxEngine.gui.locations.recalculate = function(){
 	var loc = gfxEngine.gui.locations;
 	var w = gfxEngine.Canvas.width;
 	var h = gfxEngine.Canvas.height;
 	var l = 0;
 	var t = 0;
-	var a = loc.build([loc[0]],loc[0].next[0]); //a list, in order of what needs to be built. Since locations are passed by reference, this is okay.
+	var a = loc.buildOrder([loc[0]],loc[0].next[0]); //a list, in order of what needs to be built. Since locations are passed by reference, this is okay.
 	for(var i = 0; i < a.length; i++){
 		a[i].width = (a[i].ratio[0] / 100) * w; //item width
 		a[i].height = (a[i].ratio[1] / 100) * h; //item height
@@ -193,7 +216,7 @@ gfxEngine.gui.locations.addLoc(new GuiLocation([400,400,500,500],[20,80],"mainAr
 gfxEngine.gui.locations.mainArea.resize = function(){
 	var me = gfxEngine.gui.locations.mainArea;
 	//h is less than l always. So sqrt(w*h/(phi*n)) is the h value. W*H/(phi*N)=l*h == A/(r*N)=a
-	//is PHI going to work as a ratio? Oh well.
+	//TODO: is PHI going to work as a ratio?
 	var h = Math.sqrt(me.width*me.height/(gfxEngine.phi*me.buttons.length));
 	var l = gfxEngine.phi*h;
 	var row = 0;
@@ -241,21 +264,24 @@ gfxEngine.handleClick = function(m){ //Since they aren't html elements, continue
 	var x = m.pageX;
 	var y = m.pageY;
 	var locs = gfxEngine.gui.locations;
-	for(var i = 0; i<locs.length;i++){ //if they overlap, click both. Because I can.
+	for(var i = 0; i<locs.length;i++){ //if they overlap, click both.
 		if(locs[i].pos[0]<x && (locs[i].pos[0] + locs[i].pos[2])>x && locs[i].pos[1]<y && (locs[i].pos[1]+locs[i].pos[3])>y){
 			locs[i].handleClick(m);
 		}
+	}
+};
+gfxEngine.handleHover = function(m){ //Since they aren't html elements, continue the capture.
+	var x = m.pageX;
+	var y = m.pageY;
+	var locs = gfxEngine.gui.locations;
+	for(var i = 0; i<locs.length;i++){ //HandleHover will check the bounding boxes.
+		locs[i].handleHover(m);
 	}
 };
 /***********************Needs work*********************************/
 gfxEngine.notification = function(words){
 	Game.log.write(words); //Put it in the log.
 	console.log(words);
-
-
-
-
-
 	//This brings up some sort of _non-invasive_ pop up, or goes in a notification log or something.
 };
 /*********************************************************/

@@ -33,7 +33,6 @@ Game.achievos.check = function(){
 	});
 };
 var loadAchievos = function(){
-	//A closure, so that temp functions are not clogging the namespace.
 	var newAchievo = function(name, desc){
 		Game.achievos.add(new GameAchievo(name,desc));
 	};

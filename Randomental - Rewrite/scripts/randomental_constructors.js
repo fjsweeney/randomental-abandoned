@@ -70,8 +70,11 @@ var GameAction = function(f,n){
 var GamePoint = function(n){
 	this.name = n;
 	this.value = 0;
+	this.dispValue = function(){
+		return (this.value + (this.maximum != Infinity ? "/" + this.maximum : ""));
+	}
 	this.updateName = function(){
-		return (this.value + " " + this.name + " Point" + ((this.value == 1) ? "" : "s"));};
+		return (this.dispValue() + " " + this.name + " Point" + ((this.value == 1) ? "" : "s"));};
 	this.update = [this.updateName];
 	this.displayName = this.name + " Points";
 	this.add = function(num){

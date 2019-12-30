@@ -1,6 +1,12 @@
 /*
 TODO:
 
+Priorities:
+Log
+Pausing
+SaveLoad
+Tutorial (eg how pause works)
+
 Content:
 Add content.
 Add the base-12 option.
@@ -16,5 +22,9 @@ etc.
 
 Bugs:
 ?
+
+Testing:
+Phi as a ratio for the gfx?
+All the buttons are fitting in the areas?
 
 */
